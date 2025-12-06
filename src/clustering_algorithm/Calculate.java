@@ -10,5 +10,11 @@ public class Calculate {
         return Math.pow(res, 0.5);
     }
 
+    public static double ManhattanDistance(double []point1, double []point2) {
+        double res = 0;
 
+        for (int i = 0; i < point1.length; ++i) res += Math.abs(point1[i] - point2[i]);
+
+        return res;
+    }
 }
