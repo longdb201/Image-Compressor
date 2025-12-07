@@ -7,10 +7,12 @@ public class Cluster {
 
     private double[] center;
     private List<double[]> points;
+    private List<Integer> idxOfPoints;
 
     public Cluster(double[] center) {
         this.center = center.clone();
         points = new ArrayList<>();
+        idxOfPoints = new ArrayList<>();
     }
 
     public Cluster() {
@@ -19,10 +21,12 @@ public class Cluster {
 
     public void clearPoints() {
         points.clear();
+        idxOfPoints.clear();
     }
 
-    public void addPoint(double[] point) {
+    public void addPoint(double[] point, int idx) {
         points.add(point.clone());
+        idxOfPoints.add(idx);
     }
 
     public double[] getCenter() {
@@ -37,4 +41,7 @@ public class Cluster {
         return points;
     }
 
+    public List<Integer> getIdxOfPoints() {
+        return idxOfPoints;
+    }
 }

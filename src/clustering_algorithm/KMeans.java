@@ -9,7 +9,7 @@ public class KMeans {
     private List<double[]> data;
     private List<Cluster> clusters;
 
-    public KMeans(int k, ArrayList<double[]> data) {
+    public KMeans(int k, List<double[]> data) {
         this.k = k;
 
         this.data = data;
@@ -29,20 +29,21 @@ public class KMeans {
     public void assignCluster() {
         for (Cluster c: clusters) c.clearPoints();
 
-        for (double[] point: data) {
+        for (int i = 0; i < data.size(); ++i) {
+            double []point = data.get(i);
             int minIdx = 0;
             double minDis = Calculate.EuclideanDistance(point, clusters.get(0).getCenter());
 
-            for (int i = 1; i < k; ++i) {
-                double d = Calculate.EuclideanDistance(point, clusters.get(i).getCenter());
+            for (int j = 1; j < k; ++j) {
+                double d = Calculate.EuclideanDistance(point, clusters.get(j).getCenter());
 
                 if (d < minDis) {
                     minDis = d;
-                    minIdx = i;
+                    minIdx = j;
                 }
             }
 
-            clusters.get(minIdx).addPoint(point);
+            clusters.get(minIdx).addPoint(point, i);
         }
     }
 
