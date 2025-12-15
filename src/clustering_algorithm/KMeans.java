@@ -5,7 +5,7 @@ import java.util.*;
 public class KMeans {
 
     private int k;
-    private final int maxIterations = 20;
+    private final int MAX_ITERATION = 20;
     private List<double[]> data;
     private List<Cluster> clusters;
 
@@ -66,7 +66,7 @@ public class KMeans {
     public void run() {
         initCentroid();
 
-        for (int i = 0; i < maxIterations; ++i) {
+        for (int i = 0; i < MAX_ITERATION; ++i) {
             assignCluster();
             updateCentroid();
         }
