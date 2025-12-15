@@ -6,9 +6,9 @@ public class KMedoids {
 
     private int k;
     private final int MAX_ITERATION = 20;
-    private final int THRESHOLD = 50000;
-    private final int MIN_SAMPLE_SIZE = 5000;
-    private final double SAMPLE_RATE = 0.01;
+//    private final int THRESHOLD = 50000;
+    private final int MIN_SAMPLE_SIZE = 10000;
+//    private final double SAMPLE_RATE = 0.01;
     private List<double[]> data;
     private List<Cluster> clusters;
 
@@ -41,13 +41,13 @@ public class KMedoids {
             if (check.add(t)) clusters.add(new Cluster(data.get(t).clone()));
         }
 
-        for (Cluster c: clusters) {
-            double[] point = c.getCenter();
-            for (int i = 0; i < point.length; ++i) {
-                System.out.print(point[i] + " ");
-            }
-            System.out.println();
-        }
+//        for (Cluster c: clusters) {
+//            double[] point = c.getCenter();
+//            for (int i = 0; i < point.length; ++i) {
+//                System.out.print(point[i] + " ");
+//            }
+//            System.out.println();
+//        }
     }
 
     public double assignCluster(List<double[]> dataSet) {
@@ -137,12 +137,12 @@ public class KMedoids {
     }
 
     public void run() {
-        List<double[]> dataSet;
-        if (data.size() <= THRESHOLD) dataSet = data;
-        else {
-            int sampleSize = Math.max((int)(SAMPLE_RATE * data.size()), MIN_SAMPLE_SIZE);
-            dataSet = createSamplePoints(sampleSize);
-        }
+        List<double[]> dataSet = createSamplePoints(Math.min(data.size(), MIN_SAMPLE_SIZE));
+//        if (data.size() <= THRESHOLD) dataSet = data;
+//        else {
+//            int sampleSize = Math.max((int)(SAMPLE_RATE * data.size()), MIN_SAMPLE_SIZE);
+//            dataSet = createSamplePoints(sampleSize);
+//        }
 
         initMedoids(dataSet);
         Double cost = assignCluster(dataSet);
@@ -162,7 +162,7 @@ public class KMedoids {
             if (!improved) break;
         }
 
-        if (data.size() > THRESHOLD) assignCluster(data);
+        if (data.size() > MIN_SAMPLE_SIZE) assignCluster(data);
     }
 
     public List<Cluster> getClusters() {
