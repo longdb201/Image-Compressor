@@ -1,0 +1,126 @@
+package clustering_algorithm;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class MeanShift {
+
+    private List<double[]> data;
+    private final int MIN_SAMPLE_SIZE = 5000;
+    private final double BANDWIDTH = 80;
+    private final double CONVERGING_THRESHOLD = 1;
+    private final double MERGE_THRESHOLD = 60;
+    private List<Cluster> clusters;
+
+    public MeanShift(List<double[]> data) {
+        this.data = data;
+        clusters = new ArrayList<>();
+    }
+
+    public List<double[]> createSample() {
+        int n = data.size() / MIN_SAMPLE_SIZE;
+        ArrayList<double[]> sample = new ArrayList<>();
+
+        for (int i = 0; i < data.size(); i += n) {
+            sample.add(data.get(i));
+        }
+
+        System.out.println("Sample points created!");
+        return sample;
+    }
+
+    public double[] move(double[] point, List<double[]> dataSet) {
+        double[] res = new double[point.length];
+        double[] tmp = new double[point.length];
+        double sum = 0;
+
+        for (double[] pt: dataSet) {
+            if (Calculate.EuclideanDistance(point, pt) < BANDWIDTH) {
+                for (int i = 0; i < point.length; ++i) tmp[i] = (point[i] - pt[i]) / BANDWIDTH;
+                double k = Calculate.KernelEpanechikov(tmp);
+
+                sum += k;
+                for (int i = 0; i < point.length; ++i) res[i] += pt[i] * k;
+            }
+        }
+        if (sum > 0) {
+            for (int i = 0; i < point.length; ++i) res[i] /= sum;
+            return res;
+        } else return point;
+
+
+    }
+
+    public void merge(List<double[]> points) {
+        clusters.add(new Cluster(points.get(0)));
+        clusters.get(0).addPoint(points.get(0), 0);
+
+        for (int i = 0; i < points.size(); ++i) {
+            double[] point = points.get(i);
+            boolean found = false;
+            for (Cluster cluster: clusters) {
+                double[] pt = cluster.getCenter();
+                if (Calculate.EuclideanDistance(point, pt) < MERGE_THRESHOLD) {
+                    int m = cluster.getPoints().size();
+                    cluster.addPoint(point, i);
+                    for (int j = 0; j < pt.length; ++j) pt[j] = (m * pt[j] + point[j]) / (m + 1);
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                clusters.add(new Cluster(point));
+                clusters.getLast().addPoint(point, i);
+                System.out.println("Number of clusters: " + clusters.size());
+            }
+        }
+    }
+
+    public void assignCluster() {
+        for (Cluster c: clusters) c.clearPoints();
+
+        for (int i = 0; i < data.size(); ++i) {
+            double []point = data.get(i);
+            int minIdx = 0;
+            double minDis = Calculate.EuclideanDistance(point, clusters.get(0).getCenter());
+
+            for (int j = 1; j < clusters.size(); ++j) {
+                double d = Calculate.EuclideanDistance(point, clusters.get(j).getCenter());
+
+                if (d < minDis) {
+                    minDis = d;
+                    minIdx = j;
+                }
+            }
+
+            clusters.get(minIdx).addPoint(point, i);
+        }
+    }
+
+    public void run() {
+        List<double[]> dataSet = (data.size() <= MIN_SAMPLE_SIZE) ? data : createSample();
+
+        List<double[]> mode = new ArrayList<>();
+
+        // Move
+        for (double[] point: dataSet) {
+            double[] y = point, last;
+            while (true) {
+                last = y;
+                y = move(last, dataSet);
+
+                if (Calculate.EuclideanDistance(y, last) < CONVERGING_THRESHOLD) break;
+            }
+            mode.add(y);
+            System.out.println("Moved " + mode.size() + " point(s)");
+        }
+
+        // Merge
+        merge(mode);
+        if (data.size() > MIN_SAMPLE_SIZE) assignCluster();
+    }
+
+    public List<Cluster> getClusters() {
+        return clusters;
+    }
+}

@@ -7,7 +7,7 @@ public class KMedoids {
     private int k;
     private final int MAX_ITERATION = 20;
 //    private final int THRESHOLD = 50000;
-    private final int MIN_SAMPLE_SIZE = 10000;
+    private final int MIN_SAMPLE_SIZE = 5000;
 //    private final double SAMPLE_RATE = 0.01;
     private List<double[]> data;
     private List<Cluster> clusters;
@@ -27,6 +27,17 @@ public class KMedoids {
         while (sample.size() < sampleSize) {
             int t = random.nextInt(data.size());
             if(check.add(t)) sample.add(data.get(t));
+        }
+
+        return sample;
+    }
+
+    public ArrayList<double[]> createSamplePointsNoRandom(int sampleSize) {
+        int n = data.size() / sampleSize;
+        ArrayList<double[]> sample = new ArrayList<>();
+
+        for (int i = 0; i < data.size(); i += n) {
+            sample.add(data.get(i));
         }
 
         return sample;
@@ -137,7 +148,7 @@ public class KMedoids {
     }
 
     public void run() {
-        List<double[]> dataSet = createSamplePoints(Math.min(data.size(), MIN_SAMPLE_SIZE));
+        List<double[]> dataSet = createSamplePointsNoRandom(Math.min(data.size(), MIN_SAMPLE_SIZE));
 //        if (data.size() <= THRESHOLD) dataSet = data;
 //        else {
 //            int sampleSize = Math.max((int)(SAMPLE_RATE * data.size()), MIN_SAMPLE_SIZE);
