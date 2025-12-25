@@ -6,9 +6,7 @@ public class KMedoids {
 
     private int k;
     private final int MAX_ITERATION = 20;
-//    private final int THRESHOLD = 50000;
     private final int MIN_SAMPLE_SIZE = 5000;
-//    private final double SAMPLE_RATE = 0.01;
     private List<double[]> data;
     private List<Cluster> clusters;
 
@@ -19,25 +17,14 @@ public class KMedoids {
         clusters = new ArrayList<>();
     }
 
-    public ArrayList<double[]> createSamplePoints(int sampleSize) {
+    public ArrayList<double[]> createSamplePoints() {
         ArrayList<double[]> sample = new ArrayList<>();
         Set<Integer> check = new HashSet<>();
         Random random = new Random();
 
-        while (sample.size() < sampleSize) {
+        while (sample.size() < MIN_SAMPLE_SIZE) {
             int t = random.nextInt(data.size());
             if(check.add(t)) sample.add(data.get(t));
-        }
-
-        return sample;
-    }
-
-    public ArrayList<double[]> createSamplePointsNoRandom(int sampleSize) {
-        int n = data.size() / sampleSize;
-        ArrayList<double[]> sample = new ArrayList<>();
-
-        for (int i = 0; i < data.size(); i += n) {
-            sample.add(data.get(i));
         }
 
         return sample;
@@ -49,16 +36,8 @@ public class KMedoids {
 
         while (clusters.size() < k) {
             int t = random.nextInt(dataSet.size());
-            if (check.add(t)) clusters.add(new Cluster(data.get(t).clone()));
+            if (check.add(t)) clusters.add(new Cluster(dataSet.get(t).clone()));
         }
-
-//        for (Cluster c: clusters) {
-//            double[] point = c.getCenter();
-//            for (int i = 0; i < point.length; ++i) {
-//                System.out.print(point[i] + " ");
-//            }
-//            System.out.println();
-//        }
     }
 
     public double assignCluster(List<double[]> dataSet) {
@@ -75,16 +54,15 @@ public class KMedoids {
         return cost;
     }
 
-    public boolean tryNewMedoid(int clusterIdx, double[] point, Double cost) {
+    public double tryNewMedoid(int clusterIdx, double[] point, double cost) {
         List<Cluster> newClusters = new ArrayList<>();
         for (int i = 0; i < k; ++i) {
             if (i == clusterIdx) newClusters.add(new Cluster(point));
             else newClusters.add(new Cluster(clusters.get(i).getCenter()));
         }
 
-        Double newCost = 0.0;
+        double newCost = 0.0;
 
-        // Cập nhật cụm của các điểm thuộc cụm đang xét
         List<double[]> points = clusters.get(clusterIdx).getPoints();
         List<Integer> idx = clusters.get(clusterIdx).getIdxOfPoints();
 
@@ -105,7 +83,6 @@ public class KMedoids {
             newClusters.get(minIdx).addPoint(points.get(i), idx.get(i));
         }
 
-        // Cập nhật cụm của các điểm thuôc các cụm còn lại
         for (int i = 0; i < k; ++i) {
             if (i == clusterIdx) continue;
 
@@ -127,8 +104,8 @@ public class KMedoids {
         if (newCost < cost) {
             cost = newCost;
             clusters = newClusters;
-            return true;
-        } else return false;
+        }
+        return newCost;
     }
 
     public int findNearestMedoidIdx(double[] point) {
@@ -148,15 +125,10 @@ public class KMedoids {
     }
 
     public void run() {
-        List<double[]> dataSet = createSamplePointsNoRandom(Math.min(data.size(), MIN_SAMPLE_SIZE));
-//        if (data.size() <= THRESHOLD) dataSet = data;
-//        else {
-//            int sampleSize = Math.max((int)(SAMPLE_RATE * data.size()), MIN_SAMPLE_SIZE);
-//            dataSet = createSamplePoints(sampleSize);
-//        }
+        List<double[]> dataSet = (data.size() < MIN_SAMPLE_SIZE) ? data : createSamplePoints();
 
         initMedoids(dataSet);
-        Double cost = assignCluster(dataSet);
+        double cost = assignCluster(dataSet);
 
         for (int iter = 0; iter < MAX_ITERATION; ++iter) {
             boolean improved = false;
@@ -165,8 +137,12 @@ public class KMedoids {
                 double[] center = clusters.get(i).getCenter();
 
                 for (double[] point: clusters.get(i).getPoints()) {
-                    if (point.equals(center)) continue;
-                    improved |= tryNewMedoid(i, point, cost);
+                    if (Arrays.equals(center, point)) continue;
+                    double newCost = tryNewMedoid(i, point, cost);
+                    if (newCost < cost) {
+                        cost = newCost;
+                        improved = true;
+                    }
                 }
             }
 

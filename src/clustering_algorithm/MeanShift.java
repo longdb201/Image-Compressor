@@ -1,7 +1,6 @@
 package clustering_algorithm;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class MeanShift {
 
@@ -17,15 +16,16 @@ public class MeanShift {
         clusters = new ArrayList<>();
     }
 
-    public List<double[]> createSample() {
-        int n = data.size() / MIN_SAMPLE_SIZE;
+    public List<double[]> createSamplePoints() {
         ArrayList<double[]> sample = new ArrayList<>();
+        Set<Integer> check = new HashSet<>();
+        Random random = new Random();
 
-        for (int i = 0; i < data.size(); i += n) {
-            sample.add(data.get(i));
+        while (sample.size() < MIN_SAMPLE_SIZE) {
+            int t = random.nextInt(data.size());
+            if(check.add(t)) sample.add(data.get(t));
         }
 
-        System.out.println("Sample points created!");
         return sample;
     }
 
@@ -71,7 +71,6 @@ public class MeanShift {
             if (!found) {
                 clusters.add(new Cluster(point));
                 clusters.getLast().addPoint(point, i);
-                System.out.println("Number of clusters: " + clusters.size());
             }
         }
     }
@@ -98,7 +97,7 @@ public class MeanShift {
     }
 
     public void run() {
-        List<double[]> dataSet = (data.size() <= MIN_SAMPLE_SIZE) ? data : createSample();
+        List<double[]> dataSet = (data.size() <= MIN_SAMPLE_SIZE) ? data : createSamplePoints();
 
         List<double[]> mode = new ArrayList<>();
 
@@ -112,7 +111,6 @@ public class MeanShift {
                 if (Calculate.EuclideanDistance(y, last) < CONVERGING_THRESHOLD) break;
             }
             mode.add(y);
-            System.out.println("Moved " + mode.size() + " point(s)");
         }
 
         // Merge
