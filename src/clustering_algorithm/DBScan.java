@@ -12,6 +12,7 @@ public class DBScan {
     private int[] assigned; // 0: Unassigned, 1: Assigned
     private List<Cluster> clusters;
     private List<List<Integer>> neighbor;
+    private double execTime;
 
     public DBScan(List<double[]> data) {
         this.data = data;
@@ -74,6 +75,7 @@ public class DBScan {
     }
 
     public void run() {
+        long start = System.nanoTime();
         List<double[]> dataSet = (data.size() > MIN_SAMPLE_SIZE) ? createSamplePoints() : data;
         int n = dataSet.size();
         findNeighborIdx(dataSet);
@@ -93,6 +95,8 @@ public class DBScan {
 
         if (data.size() > MIN_SAMPLE_SIZE)
             assignCluster();
+        long end = System.nanoTime();
+        execTime = ((end - start) / 1000000.0);
     }
 
     void expandLastCluster(int idx, List<double[]> dataSet) {
@@ -114,6 +118,10 @@ public class DBScan {
                 assigned[t] = 1;
             }
         }
+    }
+
+    public double getExecTime() {
+        return execTime;
     }
 
     public List<Cluster> getClusters() {

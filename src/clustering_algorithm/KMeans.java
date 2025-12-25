@@ -8,6 +8,7 @@ public class KMeans {
     private final int MAX_ITERATION = 20;
     private List<double[]> data;
     private List<Cluster> clusters;
+    private double execTime;
 
     public KMeans(int k, List<double[]> data) {
         this.k = k;
@@ -64,12 +65,20 @@ public class KMeans {
     }
 
     public void run() {
+        long start = System.nanoTime();
         initCentroid();
 
         for (int i = 0; i < MAX_ITERATION; ++i) {
             assignCluster();
             updateCentroid();
         }
+
+        long end = System.nanoTime();
+        execTime = ((end - start) / 1000000.0);
+    }
+
+    public double getExecTime() {
+        return execTime;
     }
 
     public List<Cluster> getClusters() {

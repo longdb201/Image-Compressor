@@ -9,6 +9,7 @@ public class KMedoids {
     private final int MIN_SAMPLE_SIZE = 5000;
     private List<double[]> data;
     private List<Cluster> clusters;
+    private double execTime;
 
     public KMedoids(int k, List<double[]> data) {
         this.k = k;
@@ -125,6 +126,7 @@ public class KMedoids {
     }
 
     public void run() {
+        long start = System.nanoTime();
         List<double[]> dataSet = (data.size() < MIN_SAMPLE_SIZE) ? data : createSamplePoints();
 
         initMedoids(dataSet);
@@ -150,6 +152,12 @@ public class KMedoids {
         }
 
         if (data.size() > MIN_SAMPLE_SIZE) assignCluster(data);
+        long end = System.nanoTime();
+        execTime = ((end - start) / 1000000.0);
+    }
+
+    public double getExecTime() {
+        return execTime;
     }
 
     public List<Cluster> getClusters() {

@@ -10,6 +10,7 @@ public class MeanShift {
     private final double CONVERGING_THRESHOLD = 1;
     private final double MERGE_THRESHOLD = 60;
     private List<Cluster> clusters;
+    private double execTime;
 
     public MeanShift(List<double[]> data) {
         this.data = data;
@@ -97,6 +98,7 @@ public class MeanShift {
     }
 
     public void run() {
+        long start = System.nanoTime();
         List<double[]> dataSet = (data.size() <= MIN_SAMPLE_SIZE) ? data : createSamplePoints();
 
         List<double[]> mode = new ArrayList<>();
@@ -116,6 +118,12 @@ public class MeanShift {
         // Merge
         merge(mode);
         if (data.size() > MIN_SAMPLE_SIZE) assignCluster();
+        long end = System.nanoTime();
+        execTime = ((end - start) / 1000000.0);
+    }
+
+    public double getExecTime() {
+        return execTime;
     }
 
     public List<Cluster> getClusters() {
