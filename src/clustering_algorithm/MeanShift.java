@@ -6,9 +6,9 @@ public class MeanShift {
 
     private List<double[]> data;
     private final int MIN_SAMPLE_SIZE = 5000;
-    private final double BANDWIDTH = 80;
+    private double bandwidth = 80;
     private final double CONVERGING_THRESHOLD = 1;
-    private final double MERGE_THRESHOLD = 60;
+    private double mergeThreshold = 60;
     private List<Cluster> clusters;
     private double execTime;
 
@@ -36,8 +36,8 @@ public class MeanShift {
         double sum = 0;
 
         for (double[] pt: dataSet) {
-            if (Calculate.EuclideanDistance(point, pt) < BANDWIDTH) {
-                for (int i = 0; i < point.length; ++i) tmp[i] = (point[i] - pt[i]) / BANDWIDTH;
+            if (Calculate.EuclideanDistance(point, pt) < bandwidth) {
+                for (int i = 0; i < point.length; ++i) tmp[i] = (point[i] - pt[i]) / bandwidth;
                 double k = Calculate.KernelEpanechikov(tmp);
 
                 sum += k;
@@ -61,7 +61,7 @@ public class MeanShift {
             boolean found = false;
             for (Cluster cluster: clusters) {
                 double[] pt = cluster.getCenter();
-                if (Calculate.EuclideanDistance(point, pt) < MERGE_THRESHOLD) {
+                if (Calculate.EuclideanDistance(point, pt) < mergeThreshold) {
                     int m = cluster.getPoints().size();
                     cluster.addPoint(point, i);
                     for (int j = 0; j < pt.length; ++j) pt[j] = (m * pt[j] + point[j]) / (m + 1);
@@ -119,7 +119,7 @@ public class MeanShift {
         merge(mode);
         if (data.size() > MIN_SAMPLE_SIZE) assignCluster();
         long end = System.nanoTime();
-        execTime = ((end - start) / 1000000.0);
+        execTime = ((end - start) / 1000000000.0);
     }
 
     public double getExecTime() {
@@ -129,4 +129,16 @@ public class MeanShift {
     public List<Cluster> getClusters() {
         return clusters;
     }
+
+    public void setBandwidthAndMergeThreshold(double bandwidth) {
+        this.bandwidth = bandwidth;
+        this.mergeThreshold = 0.75 * bandwidth;
+    }
+
+    public void setData(List<double[]> data) {
+        this.data = data;
+
+        clusters.clear();
+    }
+
 }

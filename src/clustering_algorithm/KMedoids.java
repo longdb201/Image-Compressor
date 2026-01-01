@@ -153,7 +153,7 @@ public class KMedoids {
 
         if (data.size() > MIN_SAMPLE_SIZE) assignCluster(data);
         long end = System.nanoTime();
-        execTime = ((end - start) / 1000000.0);
+        execTime = ((end - start) / 1000000000.0);
     }
 
     public double getExecTime() {
@@ -163,4 +163,15 @@ public class KMedoids {
     public List<Cluster> getClusters() {
         return clusters;
     }
+
+    public void setK(int k) {
+        this.k = k;
+    }
+
+    public void setData(List<double[]> data) {
+        this.data = data;
+
+        clusters.clear();
+    }
+
 }

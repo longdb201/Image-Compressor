@@ -4,7 +4,7 @@ import java.util.*;
 
 public class DBScan {
     private List<double[]> data;
-    private final double RADIUS = 7;
+    private double radius = 7;
     private final int MIN_PTS = 4;
     private final int MIN_SAMPLE_SIZE = 5000;
     private int[] visited; // 0: Not visited, 1: Visited
@@ -66,7 +66,7 @@ public class DBScan {
             double[] pt1 = dataSet.get(i);
             for (int j = i; j < n; ++j) {
                 double[] pt2 = dataSet.get(j);
-                if (Calculate.EuclideanDistance(pt1, pt2) <= RADIUS) {
+                if (Calculate.EuclideanDistance(pt1, pt2) <= radius) {
                     neighbor.get(i).add(j);
                     neighbor.get(j).add(i);
                 }
@@ -96,7 +96,7 @@ public class DBScan {
         if (data.size() > MIN_SAMPLE_SIZE)
             assignCluster();
         long end = System.nanoTime();
-        execTime = ((end - start) / 1000000.0);
+        execTime = ((end - start) / 1000000000.0);
     }
 
     void expandLastCluster(int idx, List<double[]> dataSet) {
@@ -127,4 +127,15 @@ public class DBScan {
     public List<Cluster> getClusters() {
         return clusters;
     }
+
+    public void setRadius(double radius) {
+        this.radius = radius;
+    }
+
+    public void setData(List<double[]> data) {
+        this.data = data;
+
+        clusters.clear();
+    }
+
 }
