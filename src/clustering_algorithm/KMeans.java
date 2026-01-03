@@ -1,11 +1,14 @@
 package clustering_algorithm;
 
+import utils.Calculate;
+
 import java.util.*;
 
 public class KMeans {
 
     private int k;
     private final int MAX_ITERATION = 20;
+    private final int MIN_SAMPLE_SIZE = 5000;
     private List<double[]> data;
     private List<Cluster> clusters;
     private double execTime;
@@ -17,17 +20,30 @@ public class KMeans {
         clusters = new ArrayList<>();
     }
 
-    public void initCentroid() {
+    public ArrayList<double[]> createSamplePoints() {
+        ArrayList<double[]> sample = new ArrayList<>();
         Set<Integer> check = new HashSet<>();
         Random random = new Random();
 
-        while(clusters.size() < k) {
+        while (sample.size() < MIN_SAMPLE_SIZE) {
             int t = random.nextInt(data.size());
-            if (check.add(t)) clusters.add(new Cluster(data.get(t).clone()));
+            if(check.add(t)) sample.add(data.get(t));
+        }
+
+        return sample;
+    }
+
+    public void initCentroid(List<double[]> dataSet) {
+        Random random = new Random();
+        Set<Integer> check = new HashSet<>();
+
+        while (clusters.size() < k) {
+            int t = random.nextInt(dataSet.size());
+            if (check.add(t)) clusters.add(new Cluster(dataSet.get(t).clone()));
         }
     }
 
-    public void assignCluster() {
+    public void assignCluster(List<double[]> data) {
         for (Cluster c: clusters) c.clearPoints();
 
         for (int i = 0; i < data.size(); ++i) {
@@ -66,15 +82,34 @@ public class KMeans {
 
     public void run() {
         long start = System.nanoTime();
-        initCentroid();
+        List<double[]> dataSet = (data.size() < MIN_SAMPLE_SIZE) ? data : createSamplePoints();
+        initCentroid(dataSet);
 
         for (int i = 0; i < MAX_ITERATION; ++i) {
-            assignCluster();
+            assignCluster(dataSet);
             updateCentroid();
         }
 
+        assignCluster(data);
+
         long end = System.nanoTime();
         execTime = ((end - start) / 1000000000.0);
+    }
+
+    public List<double[]> replace() {
+        List<double[]> res = new ArrayList<>();
+
+        for (int i = 0; i < data.size(); ++i) res.add(new double[]{});
+        for (Cluster cluster: clusters) {
+            double[] center = cluster.getCenter();
+            for (int i = 0; i < center.length; ++i) center[i] = (int)center[i];
+            List<double[]> point = cluster.getPoints();
+            List<Integer> idx = cluster.getIdxOfPoints();
+
+            for (int i = 0; i < point.size(); ++i) res.set(idx.get(i), center);
+        }
+
+        return res;
     }
 
     public double getExecTime() {

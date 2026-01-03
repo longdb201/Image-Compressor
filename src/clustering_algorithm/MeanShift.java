@@ -1,5 +1,7 @@
 package clustering_algorithm;
 
+import utils.Calculate;
+
 import java.util.*;
 
 public class MeanShift {
@@ -120,6 +122,22 @@ public class MeanShift {
         if (data.size() > MIN_SAMPLE_SIZE) assignCluster();
         long end = System.nanoTime();
         execTime = ((end - start) / 1000000000.0);
+    }
+
+    public List<double[]> replace() {
+        List<double[]> res = new ArrayList<>();
+
+        for (int i = 0; i < data.size(); ++i) res.add(new double[]{});
+        for (Cluster cluster: clusters) {
+            double[] center = cluster.getCenter();
+            for (int i = 0; i < center.length; ++i) center[i] = (int)center[i];
+            List<double[]> point = cluster.getPoints();
+            List<Integer> idx = cluster.getIdxOfPoints();
+
+            for (int i = 0; i < point.size(); ++i) res.set(idx.get(i), center);
+        }
+
+        return res;
     }
 
     public double getExecTime() {
