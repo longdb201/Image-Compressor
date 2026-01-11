@@ -153,4 +153,14 @@ public class Calculate {
         return res;
     }
 
+    public static double AverageSSIM(List<List<Double>> ssimMap) {
+        double res = 0;
+        int n = ssimMap.size() * ssimMap.getFirst().size();
+
+        for (List<Double> l: ssimMap) {
+            for (double d: l) res += d;
+        }
+
+        return res / n;
+    }
 }

@@ -1,5 +1,7 @@
 package utils;
 
+import clustering_algorithm.Cluster;
+
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -79,11 +81,52 @@ public class ImgHandler {
         return output;
     }
 
-    public static void SaveImage(BufferedImage output, String inpPath, String method) throws IOException{
-        int t = inpPath.lastIndexOf('.');
-        String format = inpPath.substring(t + 1);
-        String outPath = inpPath.substring(0, t) + "_" + method +"." + format;
-
-        ImageIO.write(output, format, new File(outPath));
+    public static void SaveImage(BufferedImage output, String path, String format) throws IOException{
+        ImageIO.write(output, format, new File(path));
     }
+
+    public static int viridis(double t) {
+        t = Math.max(0, Math.min(1, t));
+
+        double[][] cmap = {
+                {68, 1, 84},
+                {59, 82, 139},
+                {33, 145, 140},
+                {94, 201, 98},
+                {253, 231, 37}
+        };
+
+        int len = cmap.length - 1;
+        double p = t * (len - 1);
+        int i = (int) p;
+        double f = p - i;
+
+
+
+        if (i >= cmap.length - 1)
+            return ((int)cmap[len - 1][0] << 16) | ((int)cmap[len - 1][1] << 8) | (int)cmap[len - 1][2];
+
+        int r = (int) (cmap[i][0] * (1 - f) + cmap[i + 1][0] * f);
+        int g = (int) (cmap[i][1] * (1 - f) + cmap[i + 1][1] * f);
+        int b = (int) (cmap[i][2] * (1 - f) + cmap[i + 1][2] * f);
+
+        return (r << 16) | (g << 8) | b;
+    }
+
+    public static BufferedImage RenderSSIMHeatmap(List<List<Double>> ssimMap) {
+        int h = ssimMap.size();
+        int w = ssimMap.get(0).size();
+
+        BufferedImage img = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
+
+        for (int y = 0; y < h; y++) {
+            for (int x = 0; x < w; x++) {
+                double ssim = ssimMap.get(y).get(x);
+                img.setRGB(x, y, viridis(ssim));
+            }
+        }
+        return img;
+    }
+
+
 }
