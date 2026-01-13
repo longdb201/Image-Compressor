@@ -7,7 +7,7 @@ public class ImageChooser extends JFileChooser {
     public ImageChooser() {
         super();
         FileNameExtensionFilter filter = new FileNameExtensionFilter(
-            "Images file",
+            "Images file (*.png, *.jpg, *.jpeg)",
             "png", "jpg", "jpeg"
         );
         setFileFilter(filter);

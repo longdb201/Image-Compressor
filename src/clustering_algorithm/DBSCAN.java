@@ -4,10 +4,10 @@ import utils.Calculate;
 
 import java.util.*;
 
-public class DBScan {
+public class DBSCAN {
     private List<double[]> data;
     private double radius = 7;
-    private final int MIN_PTS = 4;
+    private final int MIN_PTS = 6;
     private final int MIN_SAMPLE_SIZE = 5000;
     private int[] visited; // 0: Not visited, 1: Visited
     private int[] label; // 0: Noise, -1: Border, 1: Core
@@ -16,7 +16,7 @@ public class DBScan {
     private List<List<Integer>> neighbor;
     private double execTime;
 
-    public DBScan(List<double[]> data) {
+    public DBSCAN(List<double[]> data) {
         this.data = data;
         clusters = new ArrayList<>();
         visited = new int[MIN_SAMPLE_SIZE];

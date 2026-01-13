@@ -29,8 +29,8 @@ public class ImageComparePage extends JPanel {
         methodList = new JCheckBox[n];
         methodList[0] = new JCheckBox("KMeans");
         methodList[1] = new JCheckBox("KMedoids");
-        methodList[2] = new JCheckBox("MeanShift");
-        methodList[3] = new JCheckBox("DBScan");
+        methodList[2] = new JCheckBox("Mean Shift");
+        methodList[3] = new JCheckBox("DBSCAN");
 
         for (int i = 0; i < n; ++i) {
             compressed[i] = new ImagePreview(null);

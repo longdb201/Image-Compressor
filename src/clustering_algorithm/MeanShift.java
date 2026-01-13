@@ -8,9 +8,9 @@ public class MeanShift {
 
     private List<double[]> data;
     private final int MIN_SAMPLE_SIZE = 5000;
-    private double bandwidth = 80;
+    private double bandwidth = 28;
     private final double CONVERGING_THRESHOLD = 1;
-    private double mergeThreshold = 60;
+    private double mergeThreshold = 21;
     private List<Cluster> clusters;
     private double execTime;
 

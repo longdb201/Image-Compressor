@@ -1,11 +1,8 @@
 package ui;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
 import java.awt.*;
-import java.io.File;
-import java.io.IOException;
 
 public class HomePage extends JPanel {
     private JButton browseBtn;
@@ -49,8 +46,8 @@ public class HomePage extends JPanel {
         methodList = new JCheckBox[4];
         methodList[0] = new JCheckBox("KMeans");
         methodList[1] = new JCheckBox("KMedoids");
-        methodList[2] = new JCheckBox("MeanShift");
-        methodList[3] = new JCheckBox("DBScan");
+        methodList[2] = new JCheckBox("Mean Shift");
+        methodList[3] = new JCheckBox("DBSCAN");
 
         argsNameList = new JLabel[4];
         argsNameList[0] = new JLabel("k: ");
@@ -114,8 +111,11 @@ public class HomePage extends JPanel {
 
         for (int i = 0; i < 4; ++i) {
             methodList[i].setEnabled(enabled);
-            argsList[i].setEnabled(methodList[i].isSelected());
-            argsNameList[i].setEnabled(methodList[i].isSelected());
+            methodList[i].setSelected(false);
+            argsList[i].setEnabled(false);
+            argsList[i].setText("");
+            argsNameList[i].setEnabled(false);
+
         }
     }
 

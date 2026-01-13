@@ -26,8 +26,8 @@ public class Calculate {
         double cd = 2 * Gamma(d) / (Math.pow(Math.PI, d * 0.5));
 
         double dis = EuclideanDistance(point, new double[d]);
-        if (d > 1) return 0;
-        else return 0.5 * cd * (1 - dis);
+        if (dis > 1) return 0;
+        else return 0.5 * cd * (1 - dis * dis);
     }
 
     public static double Gamma(int d) {
