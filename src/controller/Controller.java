@@ -137,11 +137,11 @@ public class Controller {
                     List<List<Double>> ssim = Calculate.SSIM(inpRGBData, outRGBData, w, h);
                     BufferedImage heatMap = ImgHandler.RenderSSIMHeatmap(ssim);
                     double avgSSIM = Calculate.AverageSSIM(ssim);
-                    double mse = Calculate.MSE(inpRGBData, outRGBData);
+                    double psnr = Calculate.PSNR(inpRGBData, outRGBData);
                     compressedImg[i] = tmp;
                     heatMapImg[i] = heatMap;
                     details[i] = "Colors: " + colors + ". "
-                            + "PSNR: " + String.format("%.2f", mse) + ". "
+                            + "PSNR: " + String.format("%.2f", psnr) + ". "
                             + "SSIM: " + String.format("%.2f", avgSSIM) + ". "
                             + "Execution time: " + String.format("%.3f", execTime) + "s.";
                 } else {
