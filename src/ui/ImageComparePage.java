@@ -153,6 +153,7 @@ public class ImageComparePage extends JPanel {
             details[i].setText(detailsList[i]);
             details[i].setEnabled(true);
             methodList[i].setEnabled(true);
+            heatmapBtn.setText("Heat map");
         }
     }
 }
